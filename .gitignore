@@ -1,0 +1,98 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+artifacts/
+
+# Visual Studio cache
+*.cache
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# ASP.NET Core
+wwwroot/lib/
+
+# Logs
+*.log
+logs/
+
+# Test results
+[Tt]est[Rr]esult*/
+TestResults/
+coverage/
+coverage.*
+
+# Publish
+publish/
+*.publishsettings
+*.azurePubxml
+
+# Publish profiles with credentials
+Properties/PublishProfiles/*.pubxml
+
+# User-specific settings
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Certificates and private keys
+*.pfx
+*.p12
+*.key
+*.pem
+
+# Local databases
+*.mdf
+*.ldf
+*.sqlite
+*.sqlite3
+*.db
+
+# Entity Framework migrations
+# Migrations/ - DO NOT IGNORE!
+# EF Core migrations should be committed to Git.
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider / ReSharper
+.idea/
+_ReSharper*/
+*.DotSettings.user
+
+# Operating system
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
