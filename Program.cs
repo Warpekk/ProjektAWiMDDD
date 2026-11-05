@@ -1,4 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
+using ProjektAWiMDDD.Data;
+using ProjektAWiMDDD.Models;
+
 namespace ProjektAWiMDDD
 {
     public class Program
@@ -14,6 +18,9 @@ namespace ProjektAWiMDDD
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+            builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<AppDbContext>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -26,7 +33,7 @@ namespace ProjektAWiMDDD
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            app.MapIdentityApi<User>();
 
             app.MapControllers();
 

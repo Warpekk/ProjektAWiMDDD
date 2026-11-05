@@ -1,6 +1,4 @@
 ﻿namespace ProjektAWiMDDD.Dtos
 {
-    public class TrainingPlanDto
-    {
-    }
+    public record TrainingPlanDto(int Id, string Name, string? Description, int ExerciseCount);
 }
