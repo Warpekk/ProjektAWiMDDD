@@ -1,6 +1,8 @@
-﻿namespace ProjektAWiMDDD.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ProjektAWiMDDD.Models
 {
-    public class User
+    public class User : IdentityUser
     {
     }
 }
