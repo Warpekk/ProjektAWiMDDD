@@ -3,8 +3,68 @@
   "WorkspaceRootPath": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Migrations\\20261105122019_Initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Migrations\\20261105122019_Initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\controllers\\exercisescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:controllers\\exercisescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\dtos\\trainingplandto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:dtos\\trainingplandto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\dtos\\exercisedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:dtos\\exercisedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\workoutsession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\workoutsession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\enums\\goaltype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\enums\\goaltype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\enums\\musclegroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\enums\\musclegroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\exercise.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\exercise.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\goal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\goal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\planexercise.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\planexercise.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\trainingplan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\trainingplan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|c:\\users\\warp3\\source\\repos\\projektawimddd\\models\\workoutset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0254696C-F79E-4FFA-B276-AC0F5CF80628}|ProjektAWiMDDD.csproj|solutionrelative:models\\workoutset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +74,125 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "20261105122019_Initial.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Migrations\\20261105122019_Initial.cs",
+              "RelativeDocumentMoniker": "Migrations\\20261105122019_Initial.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Migrations\\20261105122019_Initial.cs",
+              "RelativeToolTip": "Migrations\\20261105122019_Initial.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T12:20:20.223Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-11-05T12:16:46.06Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwCIAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T12:15:40.674Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ExercisesController.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Controllers\\ExercisesController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ExercisesController.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Controllers\\ExercisesController.cs",
+              "RelativeToolTip": "Controllers\\ExercisesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T12:06:07.623Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TrainingPlanDto.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Dtos\\TrainingPlanDto.cs",
+              "RelativeDocumentMoniker": "Dtos\\TrainingPlanDto.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Dtos\\TrainingPlanDto.cs",
+              "RelativeToolTip": "Dtos\\TrainingPlanDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T12:05:24.909Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ExerciseDto.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Dtos\\ExerciseDto.cs",
+              "RelativeDocumentMoniker": "Dtos\\ExerciseDto.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Dtos\\ExerciseDto.cs",
+              "RelativeToolTip": "Dtos\\ExerciseDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T12:05:04.716Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Data\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "Data\\AppDbContext.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAA/wBkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T12:02:15.009Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T11:47:07.501Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "WorkoutSession.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\WorkoutSession.cs",
+              "RelativeDocumentMoniker": "Models\\WorkoutSession.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\WorkoutSession.cs",
+              "RelativeToolTip": "Models\\WorkoutSession.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T11:46:29.617Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -30,15 +207,93 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAgwCQAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 11,
+              "Title": "Goal.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\Goal.cs",
+              "RelativeDocumentMoniker": "Models\\Goal.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\Goal.cs",
+              "RelativeToolTip": "Models\\Goal.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-03T17:51:01.78Z",
+              "WhenOpened": "2026-11-05T11:45:05.82Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "TrainingPlan.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\TrainingPlan.cs",
+              "RelativeDocumentMoniker": "Models\\TrainingPlan.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\TrainingPlan.cs",
+              "RelativeToolTip": "Models\\TrainingPlan.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T11:45:07.069Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "PlanExercise.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\PlanExercise.cs",
+              "RelativeDocumentMoniker": "Models\\PlanExercise.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\PlanExercise.cs",
+              "RelativeToolTip": "Models\\PlanExercise.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T11:45:02.692Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Exercise.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\Exercise.cs",
+              "RelativeDocumentMoniker": "Models\\Exercise.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\Exercise.cs",
+              "RelativeToolTip": "Models\\Exercise.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T11:43:36.725Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MuscleGroup.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\Enums\\MuscleGroup.cs",
+              "RelativeDocumentMoniker": "Models\\Enums\\MuscleGroup.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\Enums\\MuscleGroup.cs",
+              "RelativeToolTip": "Models\\Enums\\MuscleGroup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T11:41:35.44Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "GoalType.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\Enums\\GoalType.cs",
+              "RelativeDocumentMoniker": "Models\\Enums\\GoalType.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\Enums\\GoalType.cs",
+              "RelativeToolTip": "Models\\Enums\\GoalType.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T11:42:59.767Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "WorkoutSet.cs",
+              "DocumentMoniker": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\WorkoutSet.cs",
+              "RelativeDocumentMoniker": "Models\\WorkoutSet.cs",
+              "ToolTip": "C:\\Users\\warp3\\Source\\Repos\\ProjektAWiMDDD\\Models\\WorkoutSet.cs",
+              "RelativeToolTip": "Models\\WorkoutSet.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-05T11:46:37.626Z",
               "EditorCaption": ""
             }
           ]
