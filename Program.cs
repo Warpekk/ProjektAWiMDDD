@@ -1,8 +1,10 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using ProjektAWiMDDD.Data;
 using ProjektAWiMDDD.Models;
-using Microsoft.OpenApi.Models;
+using ProjektAWiMDDD.Services;
+using ProjektAWiMDDD.Components;
 
 namespace ProjektAWiMDDD
 {
@@ -46,6 +48,13 @@ namespace ProjektAWiMDDD
 
             builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
             builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<AppDbContext>();
+            builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+            builder.Services.AddScoped(sp => new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7155/")
+            });
+            builder.Services.AddScoped<FitnessApiService>();
 
             var app = builder.Build();
 
@@ -62,7 +71,8 @@ namespace ProjektAWiMDDD
             app.MapIdentityApi<User>();
 
             app.MapControllers();
-
+            app.UseAntiforgery();
+            app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
             app.Run();
         }
     }
