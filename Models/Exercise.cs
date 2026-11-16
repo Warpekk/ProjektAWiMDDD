@@ -10,5 +10,6 @@ namespace ProjektAWiMDDD.Models
         [MaxLength(1000)] public string? Description { get; set; }
         public MuscleGroup MuscleGroup { get; set; }
         public string? Equipment { get; set; }
+        public List<PlanExercise> PlanExercises { get; set; } = new();
     }
 }

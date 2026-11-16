@@ -26,7 +26,10 @@ namespace ProjektAWiMDDD.Data
 
             b.Entity<WorkoutSession>().HasOne(w => w.TrainingPlan).WithMany().OnDelete(DeleteBehavior.Restrict);
             b.Entity<WorkoutSet>().HasOne(s => s.Exercise).WithMany().OnDelete(DeleteBehavior.Restrict);
-            b.Entity<PlanExercise>().HasOne(p => p.Exercise).WithMany().OnDelete(DeleteBehavior.Restrict);
+            b.Entity<PlanExercise>().HasOne(p => p.Exercise)
+                                    .WithMany(e => e.PlanExercises)
+                                    .HasForeignKey(p => p.ExerciseId)
+                                    .OnDelete(DeleteBehavior.Restrict);
             b.Entity<Goal>().HasOne(g => g.Exercise).WithMany().OnDelete(DeleteBehavior.Restrict);
 
             //Przykładowe dane na start
