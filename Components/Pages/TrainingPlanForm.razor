@@ -1,13 +1,8 @@
 ﻿@page "/training-plans/create"
 @page "/training-plans/edit/{Id:int}"
 @rendermode InteractiveServer
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.EntityFrameworkCore
-@using ProjektAWiMDDD.Data
-@using ProjektAWiMDDD.Models
-@inject AppDbContext Db
-@inject AuthenticationStateProvider AuthStateProvider
+@using ProjektAWiMDDD.Services
+@inject FitnessApiService Api
 @inject NavigationManager Nav
 
 <PageTitle>@(IsEditMode ? "Edytuj Plan" : "Nowy Plan Treningowy")</PageTitle>
@@ -113,49 +108,41 @@ else
 
     private TrainingPlanRequest model = new();
     private List<ExerciseDto> availableExercises = [];
-    private string? userId;
     private bool isLoading = true;
     private bool isSubmitting = false;
     private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        userId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        availableExercises = await Api.GetExercisesAsync();
 
-        availableExercises = await Db.Exercises
-            .AsNoTracking()
-            .OrderBy(e => e.Name)
-            .Select(e => new ExerciseDto(e.Id, e.Name, e.Description, e.MuscleGroup.ToString(), e.Equipment))
-            .ToListAsync();
-
-        if (IsEditMode && userId is not null)
+        if (IsEditMode)
         {
-            var existing = await Db.TrainingPlans
-                .Include(p => p.Exercises)
-                .FirstOrDefaultAsync(p => p.Id == Id!.Value && p.UserId == userId);
-
-            if (existing is not null)
+            try
             {
-                model = new TrainingPlanRequest
+                var existing = await Api.GetTrainingPlanByIdAsync(Id!.Value);
+                if (existing is not null)
                 {
-                    Name = existing.Name,
-                    Description = existing.Description,
-                    Exercises = existing.Exercises
-                        .OrderBy(e => e.Order)
-                        .Select(e => new PlanExerciseRequest
-                        {
-                            ExerciseId = e.ExerciseId,
-                            Order = e.Order,
-                            PlannedSets = e.PlannedSets,
-                            PlannedReps = e.PlannedReps,
-                            PlannedWeight = e.PlannedWeight
-                        }).ToList()
-                };
+                    model = new TrainingPlanRequest
+                    {
+                        Name = existing.Name,
+                        Description = existing.Description,
+                        Exercises = existing.Exercises
+                            .OrderBy(e => e.Order)
+                            .Select(e => new PlanExerciseRequest
+                            {
+                                ExerciseId = e.ExerciseId,
+                                Order = e.Order,
+                                PlannedSets = e.PlannedSets,
+                                PlannedReps = e.PlannedReps,
+                                PlannedWeight = e.PlannedWeight
+                            }).ToList()
+                    };
+                }
             }
-            else
+            catch (HttpRequestException)
             {
-                errorMessage = "Nie znaleziono planu do edycji.";
+                errorMessage = "Nie udało się pobrać planu do edycji (sprawdź, czy jesteś zalogowany).";
             }
         }
         else
@@ -180,71 +167,22 @@ else
 
     private async Task HandleSubmitAsync()
     {
-        if (string.IsNullOrEmpty(userId))
-        {
-            errorMessage = "Musisz być zalogowany, aby zapisać plan treningowy.";
-            return;
-        }
-
-        if (model.Exercises.Any(e => e.ExerciseId == 0))
-        {
-            errorMessage = "Wybierz ćwiczenie dla każdego dodanego wiersza.";
-            return;
-        }
-
         isSubmitting = true;
         errorMessage = null;
 
-        if (IsEditMode)
+        bool success = IsEditMode
+            ? await Api.UpdateTrainingPlanAsync(Id!.Value, model)
+            : await Api.CreateTrainingPlanAsync(model);
+
+        isSubmitting = false;
+
+        if (success)
         {
-            var plan = await Db.TrainingPlans
-                .Include(p => p.Exercises)
-                .FirstOrDefaultAsync(p => p.Id == Id!.Value && p.UserId == userId);
-
-            if (plan is null)
-            {
-                errorMessage = "Nie znaleziono planu.";
-                isSubmitting = false;
-                return;
-            }
-
-            plan.Name = model.Name;
-            plan.Description = model.Description;
-            plan.Exercises.Clear();
-
-            foreach (var ex in model.Exercises)
-            {
-                plan.Exercises.Add(new PlanExercise
-                {
-                    ExerciseId = ex.ExerciseId,
-                    Order = ex.Order,
-                    PlannedSets = ex.PlannedSets,
-                    PlannedReps = ex.PlannedReps,
-                    PlannedWeight = ex.PlannedWeight
-                });
-            }
+            Nav.NavigateTo("/training-plans");
         }
         else
         {
-            var newPlan = new TrainingPlan
-            {
-                Name = model.Name,
-                Description = model.Description,
-                UserId = userId,
-                Exercises = model.Exercises.Select(ex => new PlanExercise
-                {
-                    ExerciseId = ex.ExerciseId,
-                    Order = ex.Order,
-                    PlannedSets = ex.PlannedSets,
-                    PlannedReps = ex.PlannedReps,
-                    PlannedWeight = ex.PlannedWeight
-                }).ToList()
-            };
-            Db.TrainingPlans.Add(newPlan);
+            errorMessage = "Błąd zapisu. Upewnij się, że jesteś zalogowany i wybrałeś poprawne ćwiczenia.";
         }
-
-        await Db.SaveChangesAsync();
-        isSubmitting = false;
-        Nav.NavigateTo("/training-plans");
     }
 }

@@ -1,11 +1,7 @@
 ﻿@page "/training-plans/{Id:int}"
 @rendermode InteractiveServer
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.EntityFrameworkCore
-@using ProjektAWiMDDD.Data
-@inject AppDbContext Db
-@inject AuthenticationStateProvider AuthStateProvider
+@using ProjektAWiMDDD.Services
+@inject FitnessApiService Api
 
 <PageTitle>Szczegóły Planu</PageTitle>
 
@@ -68,29 +64,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (userId is not null)
+        try
         {
-            plan = await Db.TrainingPlans
-                .AsNoTracking()
-                .Where(p => p.Id == Id && p.UserId == userId)
-                .Select(p => new TrainingPlanDetailsDto(
-                    p.Id,
-                    p.Name,
-                    p.Description,
-                    p.Exercises.Select(e => new PlanExerciseDetailsDto(
-                        e.ExerciseId,
-                        e.Exercise.Name,
-                        e.Exercise.MuscleGroup.ToString(),
-                        e.Order,
-                        e.PlannedSets,
-                        e.PlannedReps,
-                        e.PlannedWeight
-                    )).ToList()
-                ))
-                .FirstOrDefaultAsync();
+            plan = await Api.GetTrainingPlanByIdAsync(Id);
+        }
+        catch (HttpRequestException)
+        {
+            plan = null;
         }
         isLoading = false;
     }

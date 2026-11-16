@@ -1,8 +1,7 @@
 ﻿@page "/exercises"
 @rendermode InteractiveServer
-@using Microsoft.EntityFrameworkCore
-@using ProjektAWiMDDD.Data
-@inject AppDbContext Db
+@using ProjektAWiMDDD.Services
+@inject FitnessApiService Api
 
 <PageTitle>Baza Ćwiczeń</PageTitle>
 
@@ -73,18 +72,7 @@ else
     private async Task LoadExercisesAsync()
     {
         isLoading = true;
-        var q = Db.Exercises.AsNoTracking();
-
-        if (!string.IsNullOrWhiteSpace(searchQuery))
-            q = q.Where(e => e.Name.Contains(searchQuery));
-
-        if (selectedGroup.HasValue)
-            q = q.Where(e => e.MuscleGroup == selectedGroup.Value);
-
-        exercises = await q.OrderBy(e => e.Name)
-            .Select(e => new ExerciseDto(e.Id, e.Name, e.Description, e.MuscleGroup.ToString(), e.Equipment))
-            .ToListAsync();
-
+        exercises = await Api.GetExercisesAsync(searchQuery, selectedGroup);
         isLoading = false;
     }
 

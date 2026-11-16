@@ -50,11 +50,13 @@ namespace ProjektAWiMDDD
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
-            builder.Services.AddScoped(sp => new HttpClient
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddTransient<CookieForwardingHandler>();
+
+            builder.Services.AddHttpClient<FitnessApiService>(client =>
             {
-                BaseAddress = new Uri("https://localhost:7155/")
-            });
-            builder.Services.AddScoped<FitnessApiService>();
+                client.BaseAddress = new Uri("https://localhost:7155/");
+            }).AddHttpMessageHandler<CookieForwardingHandler>();
 
             var app = builder.Build();
 

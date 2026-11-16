@@ -1,11 +1,7 @@
 ﻿@page "/training-plans"
 @rendermode InteractiveServer
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.EntityFrameworkCore
-@using ProjektAWiMDDD.Data
-@inject AppDbContext Db
-@inject AuthenticationStateProvider AuthStateProvider
+@using ProjektAWiMDDD.Services
+@inject FitnessApiService Api
 
 <PageTitle>Plany Treningowe</PageTitle>
 
@@ -14,7 +10,11 @@
     <a href="/training-plans/create" class="btn btn-success">+ Nowy Plan</a>
 </div>
 
-@if (isLoading)
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (isLoading)
 {
     <p><em>Ładowanie planów...</em></p>
 }
@@ -53,37 +53,30 @@ else
 
 @code {
     private List<TrainingPlanDto> plans = [];
-    private string? userId;
     private bool isLoading = true;
+    private string? errorMessage;
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        userId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        await LoadPlansAsync();
-    }
+    protected override async Task OnInitializedAsync() => await LoadPlansAsync();
 
     private async Task LoadPlansAsync()
     {
         isLoading = true;
-        if (userId is not null)
+        errorMessage = null;
+        try
         {
-            plans = await Db.TrainingPlans
-                .AsNoTracking()
-                .Where(p => p.UserId == userId)
-                .Select(p => new TrainingPlanDto(p.Id, p.Name, p.Description, p.Exercises.Count))
-                .ToListAsync();
+            plans = await Api.GetTrainingPlansAsync();
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Brak dostępu. Zaloguj się, aby zobaczyć swoje plany treningowe.";
         }
         isLoading = false;
     }
 
     private async Task DeletePlanAsync(int id)
     {
-        var plan = await Db.TrainingPlans.FirstOrDefaultAsync(p => p.Id == id && p.UserId == userId);
-        if (plan is not null)
+        if (await Api.DeleteTrainingPlanAsync(id))
         {
-            Db.TrainingPlans.Remove(plan);
-            await Db.SaveChangesAsync();
             await LoadPlansAsync();
         }
     }

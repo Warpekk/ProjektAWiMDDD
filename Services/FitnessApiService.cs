@@ -18,7 +18,6 @@ public class FitnessApiService(HttpClient http)
         return await http.GetFromJsonAsync<List<ExerciseDto>>(url) ?? [];
     }
 
-
     public async Task<List<TrainingPlanDto>> GetTrainingPlansAsync()
     {
         return await http.GetFromJsonAsync<List<TrainingPlanDto>>("api/trainingplans") ?? [];
