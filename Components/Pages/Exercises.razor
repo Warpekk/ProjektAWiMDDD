@@ -1,5 +1,8 @@
 ﻿@page "/exercises"
 @rendermode InteractiveServer
+@using System.Net
+@using ProjektAWiMDDD.Dtos
+@using ProjektAWiMDDD.Models.Enums
 @using ProjektAWiMDDD.Services
 @inject FitnessApiService Api
 
@@ -26,7 +29,13 @@
     </div>
 </div>
 
-@if (isLoading)
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
+}
+else if (isLoading)
 {
     <p><em>Ładowanie ćwiczeń...</em></p>
 }
@@ -66,14 +75,33 @@ else
     private string? searchQuery;
     private MuscleGroup? selectedGroup;
     private bool isLoading = true;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync() => await LoadExercisesAsync();
 
     private async Task LoadExercisesAsync()
     {
         isLoading = true;
-        exercises = await Api.GetExercisesAsync(searchQuery, selectedGroup);
-        isLoading = false;
+        errorMessage = null;
+
+        try
+        {
+            exercises = await Api.GetExercisesAsync(searchQuery, selectedGroup);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            exercises = [];
+            errorMessage = "Brak dostępu. Zaloguj się, aby zobaczyć bazę ćwiczeń.";
+        }
+        catch (Exception)
+        {
+            exercises = [];
+            errorMessage = "Wystąpił błąd podczas pobierania listy ćwiczeń.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private async Task ResetFiltersAsync()
