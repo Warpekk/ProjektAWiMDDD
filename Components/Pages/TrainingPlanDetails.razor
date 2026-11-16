@@ -1,0 +1,77 @@
+﻿@page "/training-plans/{Id:int}"
+@rendermode InteractiveServer
+@using ProjektAWiMDDD.Services
+@inject FitnessApiService Api
+
+<PageTitle>Szczegóły Planu</PageTitle>
+
+@if (isLoading)
+{
+    <p><em>Ładowanie szczegółów planu...</em></p>
+}
+else if (plan is null)
+{
+    <div class="alert alert-danger">Nie znaleziono planu treningowego.</div>
+    <a href="/training-plans" class="btn btn-secondary">Powrót</a>
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h3>@plan.Name</h3>
+            @if (!string.IsNullOrWhiteSpace(plan.Description))
+            {
+                <p class="text-muted">@plan.Description</p>
+            }
+        </div>
+        <div>
+            <a href="/training-plans/edit/@plan.Id" class="btn btn-warning me-2">Edytuj plan</a>
+            <a href="/training-plans" class="btn btn-outline-secondary">Powrót do listy</a>
+        </div>
+    </div>
+
+    <table class="table table-bordered align-middle mt-3">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Ćwiczenie</th>
+                <th>Partia</th>
+                <th>Serie</th>
+                <th>Powtórzenia</th>
+                <th>Planowany ciężar (kg)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in plan.Exercises.OrderBy(e => e.Order))
+            {
+                <tr>
+                    <td>@item.Order</td>
+                    <td class="fw-bold">@item.ExerciseName</td>
+                    <td><span class="badge bg-info text-dark">@item.MuscleGroup</span></td>
+                    <td>@item.PlannedSets</td>
+                    <td>@item.PlannedReps</td>
+                    <td>@(item.PlannedWeight.HasValue ? $"{item.PlannedWeight} kg" : "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private TrainingPlanDetailsDto? plan;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            plan = await Api.GetTrainingPlanByIdAsync(Id);
+        }
+        catch (HttpRequestException)
+        {
+            plan = null;
+        }
+        isLoading = false;
+    }
+}

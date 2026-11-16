@@ -1,0 +1,113 @@
+﻿@page "/exercises"
+@rendermode InteractiveServer
+@using System.Net
+@using ProjektAWiMDDD.Dtos
+@using ProjektAWiMDDD.Models.Enums
+@using ProjektAWiMDDD.Services
+@inject FitnessApiService Api
+
+<PageTitle>Baza Ćwiczeń</PageTitle>
+
+<h3>Baza Ćwiczeń</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <input type="text" class="form-control" placeholder="Szukaj po nazwie..."
+               @bind="searchQuery" @bind:event="oninput" @onkeyup="LoadExercisesAsync" />
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" @bind="selectedGroup" @bind:after="LoadExercisesAsync">
+            <option value="">Wszystkie partie mięśniowe</option>
+            @foreach (var group in Enum.GetValues<MuscleGroup>())
+            {
+                <option value="@group">@group</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-outline-secondary w-100" @onclick="ResetFiltersAsync">Wyczyść</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
+}
+else if (isLoading)
+{
+    <p><em>Ładowanie ćwiczeń...</em></p>
+}
+else if (exercises.Count == 0)
+{
+    <div class="alert alert-info">Nie znaleziono ćwiczeń spełniających kryteria.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Partia mięśniowa</th>
+                    <th>Sprzęt</th>
+                    <th>Opis</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ex in exercises)
+                {
+                    <tr>
+                        <td class="fw-bold">@ex.Name</td>
+                        <td><span class="badge bg-primary">@ex.MuscleGroup</span></td>
+                        <td>@(string.IsNullOrWhiteSpace(ex.Equipment) ? "Brak / Masa ciała" : ex.Equipment)</td>
+                        <td>@ex.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<ExerciseDto> exercises = [];
+    private string? searchQuery;
+    private MuscleGroup? selectedGroup;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync() => await LoadExercisesAsync();
+
+    private async Task LoadExercisesAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            exercises = await Api.GetExercisesAsync(searchQuery, selectedGroup);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            exercises = [];
+            errorMessage = "Brak dostępu. Zaloguj się, aby zobaczyć bazę ćwiczeń.";
+        }
+        catch (Exception)
+        {
+            exercises = [];
+            errorMessage = "Wystąpił błąd podczas pobierania listy ćwiczeń.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ResetFiltersAsync()
+    {
+        searchQuery = null;
+        selectedGroup = null;
+        await LoadExercisesAsync();
+    }
+}

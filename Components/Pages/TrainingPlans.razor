@@ -1,0 +1,83 @@
+﻿@page "/training-plans"
+@rendermode InteractiveServer
+@using ProjektAWiMDDD.Services
+@inject FitnessApiService Api
+
+<PageTitle>Plany Treningowe</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Moje Plany Treningowe</h3>
+    <a href="/training-plans/create" class="btn btn-success">+ Nowy Plan</a>
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (isLoading)
+{
+    <p><em>Ładowanie planów...</em></p>
+}
+else if (plans.Count == 0)
+{
+    <div class="alert alert-warning">
+        Nie masz jeszcze żadnych planów treningowych. Kliknij <strong>+ Nowy Plan</strong>, aby utworzyć pierwszy.
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var plan in plans)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@plan.Name</h5>
+                        <p class="card-text text-muted">
+                            @(string.IsNullOrWhiteSpace(plan.Description) ? "Brak opisu" : plan.Description)
+                        </p>
+                        <span class="badge bg-secondary">Liczba ćwiczeń: @plan.ExerciseCount</span>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between">
+                        <a href="/training-plans/@plan.Id" class="btn btn-sm btn-outline-primary">Szczegóły</a>
+                        <div>
+                            <a href="/training-plans/edit/@plan.Id" class="btn btn-sm btn-outline-warning me-1">Edytuj</a>
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeletePlanAsync(plan.Id)">Usuń</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<TrainingPlanDto> plans = [];
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync() => await LoadPlansAsync();
+
+    private async Task LoadPlansAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
+        try
+        {
+            plans = await Api.GetTrainingPlansAsync();
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Brak dostępu. Zaloguj się, aby zobaczyć swoje plany treningowe.";
+        }
+        isLoading = false;
+    }
+
+    private async Task DeletePlanAsync(int id)
+    {
+        if (await Api.DeleteTrainingPlanAsync(id))
+        {
+            await LoadPlansAsync();
+        }
+    }
+}

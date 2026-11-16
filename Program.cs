@@ -1,8 +1,9 @@
-
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using ProjektAWiMDDD.Data;
 using ProjektAWiMDDD.Models;
-using Microsoft.OpenApi.Models;
+using ProjektAWiMDDD.Services;
+using ProjektAWiMDDD.Components;
 
 namespace ProjektAWiMDDD
 {
@@ -13,9 +14,7 @@ namespace ProjektAWiMDDD
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
@@ -45,7 +44,19 @@ namespace ProjektAWiMDDD
             });
 
             builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
             builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<AppDbContext>();
+
+            builder.Services.AddCascadingAuthenticationState();
+            builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddTransient<CookieForwardingHandler>();
+
+            builder.Services.AddHttpClient<FitnessApiService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7155/");
+            }).AddHttpMessageHandler<CookieForwardingHandler>();
 
             var app = builder.Build();
 
@@ -58,10 +69,15 @@ namespace ProjektAWiMDDD
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-            app.MapIdentityApi<User>();
+            app.UseStaticFiles();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseAntiforgery();
+            app.MapIdentityApi<User>();
             app.MapControllers();
+            app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
             app.Run();
         }

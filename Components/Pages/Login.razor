@@ -1,0 +1,88 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using ProjektAWiMDDD.Models
+@inject SignInManager<User> SignInManager
+@inject NavigationManager Nav
+
+<PageTitle>Logowanie</PageTitle>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="card-title mb-3 text-center">Zaloguj się</h3>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger">@errorMessage</div>
+                }
+
+                <EditForm Model="Input" method="post" OnValidSubmit="LoginUserAsync" FormName="loginForm">
+                    <DataAnnotationsValidator />
+
+                    <div class="mb-3">
+                        <label class="form-label">Adres e-mail</label>
+                        <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" />
+                        <ValidationMessage For="() => Input.Email" class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Hasło</label>
+                        <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" />
+                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <InputCheckbox @bind-Value="Input.RememberMe" class="form-check-input" id="rememberMe" />
+                        <label class="form-check-label" for="rememberMe">Zapamiętaj mnie</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Zaloguj się</button>
+                </EditForm>
+
+                <div class="mt-3 text-center">
+                    <span>Nie masz jeszcze konta? <a href="/register">Zarejestruj się</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LoginInputModel Input { get; set; } = new();
+
+    private string? errorMessage;
+
+    private async Task LoginUserAsync()
+    {
+        errorMessage = null;
+
+        var result = await SignInManager.PasswordSignInAsync(
+            Input.Email,
+            Input.Password,
+            Input.RememberMe,
+            lockoutOnFailure: false);
+
+        if (result.Succeeded)
+        {
+            Nav.NavigateTo("/training-plans");
+            return;
+        }
+
+        errorMessage = "Nieprawidłowy adres e-mail lub hasło.";
+    }
+
+    private sealed class LoginInputModel
+    {
+        [Required(ErrorMessage = "Podaj adres e-mail.")]
+        [EmailAddress(ErrorMessage = "Niepoprawny format adresu e-mail.")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Podaj hasło.")]
+        public string Password { get; set; } = "";
+
+        public bool RememberMe { get; set; }
+    }
+}
