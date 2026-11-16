@@ -1,0 +1,97 @@
+﻿@page "/training-plans/{Id:int}"
+@rendermode InteractiveServer
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+@using ProjektAWiMDDD.Data
+@inject AppDbContext Db
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Szczegóły Planu</PageTitle>
+
+@if (isLoading)
+{
+    <p><em>Ładowanie szczegółów planu...</em></p>
+}
+else if (plan is null)
+{
+    <div class="alert alert-danger">Nie znaleziono planu treningowego.</div>
+    <a href="/training-plans" class="btn btn-secondary">Powrót</a>
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h3>@plan.Name</h3>
+            @if (!string.IsNullOrWhiteSpace(plan.Description))
+            {
+                <p class="text-muted">@plan.Description</p>
+            }
+        </div>
+        <div>
+            <a href="/training-plans/edit/@plan.Id" class="btn btn-warning me-2">Edytuj plan</a>
+            <a href="/training-plans" class="btn btn-outline-secondary">Powrót do listy</a>
+        </div>
+    </div>
+
+    <table class="table table-bordered align-middle mt-3">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Ćwiczenie</th>
+                <th>Partia</th>
+                <th>Serie</th>
+                <th>Powtórzenia</th>
+                <th>Planowany ciężar (kg)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in plan.Exercises.OrderBy(e => e.Order))
+            {
+                <tr>
+                    <td>@item.Order</td>
+                    <td class="fw-bold">@item.ExerciseName</td>
+                    <td><span class="badge bg-info text-dark">@item.MuscleGroup</span></td>
+                    <td>@item.PlannedSets</td>
+                    <td>@item.PlannedReps</td>
+                    <td>@(item.PlannedWeight.HasValue ? $"{item.PlannedWeight} kg" : "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private TrainingPlanDetailsDto? plan;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is not null)
+        {
+            plan = await Db.TrainingPlans
+                .AsNoTracking()
+                .Where(p => p.Id == Id && p.UserId == userId)
+                .Select(p => new TrainingPlanDetailsDto(
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.Exercises.Select(e => new PlanExerciseDetailsDto(
+                        e.ExerciseId,
+                        e.Exercise.Name,
+                        e.Exercise.MuscleGroup.ToString(),
+                        e.Order,
+                        e.PlannedSets,
+                        e.PlannedReps,
+                        e.PlannedWeight
+                    )).ToList()
+                ))
+                .FirstOrDefaultAsync();
+        }
+        isLoading = false;
+    }
+}

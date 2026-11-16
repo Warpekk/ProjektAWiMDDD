@@ -1,0 +1,250 @@
+﻿@page "/training-plans/create"
+@page "/training-plans/edit/{Id:int}"
+@rendermode InteractiveServer
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+@using ProjektAWiMDDD.Data
+@using ProjektAWiMDDD.Models
+@inject AppDbContext Db
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+
+<PageTitle>@(IsEditMode ? "Edytuj Plan" : "Nowy Plan Treningowy")</PageTitle>
+
+<h3>@(IsEditMode ? "Edytuj Plan Treningowy" : "Utwórz Nowy Plan Treningowy")</h3>
+
+@if (isLoading)
+{
+    <p><em>Ładowanie danych...</em></p>
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="HandleSubmitAsync" FormName="TrainingPlanForm">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <div class="mb-3">
+            <label class="form-label">Nazwa planu</label>
+            <InputText class="form-control" @bind-Value="model.Name" />
+            <ValidationMessage For="@(() => model.Name)" />
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Opis (opcjonalnie)</label>
+            <InputTextArea class="form-control" rows="2" @bind-Value="model.Description" />
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5>Ćwiczenia w planie</h5>
+            <button type="button" class="btn btn-sm btn-primary" @onclick="AddExerciseRow">
+                + Dodaj ćwiczenie
+            </button>
+        </div>
+
+        @if (model.Exercises.Count == 0)
+        {
+            <div class="alert alert-secondary">Brak ćwiczeń w planie. Kliknij przycisk powyżej, aby dodać pierwsze.</div>
+        }
+        else
+        {
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 90px;">Kolejność</th>
+                            <th>Ćwiczenie</th>
+                            <th style="width: 110px;">Serie</th>
+                            <th style="width: 130px;">Powtórzenia</th>
+                            <th style="width: 140px;">Ciężar (kg)</th>
+                            <th style="width: 60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < model.Exercises.Count; i++)
+                        {
+                            var index = i;
+                            var item = model.Exercises[index];
+                            <tr>
+                                <td><InputNumber class="form-control" @bind-Value="item.Order" /></td>
+                                <td>
+                                    <InputSelect class="form-select" @bind-Value="item.ExerciseId">
+                                        <option value="0">-- Wybierz ćwiczenie --</option>
+                                        @foreach (var ex in availableExercises)
+                                        {
+                                            <option value="@ex.Id">@ex.Name (@ex.MuscleGroup)</option>
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => item.ExerciseId)" />
+                                </td>
+                                <td><InputNumber class="form-control" @bind-Value="item.PlannedSets" /></td>
+                                <td><InputNumber class="form-control" @bind-Value="item.PlannedReps" /></td>
+                                <td><InputNumber class="form-control" @bind-Value="item.PlannedWeight" /></td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-danger"
+                                            @onclick="() => RemoveExerciseRow(index)">
+                                        &times;
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success" disabled="@isSubmitting">
+                @(isSubmitting ? "Zapisywanie..." : "Zapisz plan")
+            </button>
+            <a href="/training-plans" class="btn btn-secondary">Anuluj</a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    private bool IsEditMode => Id.HasValue;
+
+    private TrainingPlanRequest model = new();
+    private List<ExerciseDto> availableExercises = [];
+    private string? userId;
+    private bool isLoading = true;
+    private bool isSubmitting = false;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        userId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        availableExercises = await Db.Exercises
+            .AsNoTracking()
+            .OrderBy(e => e.Name)
+            .Select(e => new ExerciseDto(e.Id, e.Name, e.Description, e.MuscleGroup.ToString(), e.Equipment))
+            .ToListAsync();
+
+        if (IsEditMode && userId is not null)
+        {
+            var existing = await Db.TrainingPlans
+                .Include(p => p.Exercises)
+                .FirstOrDefaultAsync(p => p.Id == Id!.Value && p.UserId == userId);
+
+            if (existing is not null)
+            {
+                model = new TrainingPlanRequest
+                {
+                    Name = existing.Name,
+                    Description = existing.Description,
+                    Exercises = existing.Exercises
+                        .OrderBy(e => e.Order)
+                        .Select(e => new PlanExerciseRequest
+                        {
+                            ExerciseId = e.ExerciseId,
+                            Order = e.Order,
+                            PlannedSets = e.PlannedSets,
+                            PlannedReps = e.PlannedReps,
+                            PlannedWeight = e.PlannedWeight
+                        }).ToList()
+                };
+            }
+            else
+            {
+                errorMessage = "Nie znaleziono planu do edycji.";
+            }
+        }
+        else
+        {
+            AddExerciseRow();
+        }
+
+        isLoading = false;
+    }
+
+    private void AddExerciseRow()
+    {
+        model.Exercises.Add(new PlanExerciseRequest
+        {
+            Order = model.Exercises.Count + 1,
+            PlannedSets = 3,
+            PlannedReps = 10
+        });
+    }
+
+    private void RemoveExerciseRow(int index) => model.Exercises.RemoveAt(index);
+
+    private async Task HandleSubmitAsync()
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            errorMessage = "Musisz być zalogowany, aby zapisać plan treningowy.";
+            return;
+        }
+
+        if (model.Exercises.Any(e => e.ExerciseId == 0))
+        {
+            errorMessage = "Wybierz ćwiczenie dla każdego dodanego wiersza.";
+            return;
+        }
+
+        isSubmitting = true;
+        errorMessage = null;
+
+        if (IsEditMode)
+        {
+            var plan = await Db.TrainingPlans
+                .Include(p => p.Exercises)
+                .FirstOrDefaultAsync(p => p.Id == Id!.Value && p.UserId == userId);
+
+            if (plan is null)
+            {
+                errorMessage = "Nie znaleziono planu.";
+                isSubmitting = false;
+                return;
+            }
+
+            plan.Name = model.Name;
+            plan.Description = model.Description;
+            plan.Exercises.Clear();
+
+            foreach (var ex in model.Exercises)
+            {
+                plan.Exercises.Add(new PlanExercise
+                {
+                    ExerciseId = ex.ExerciseId,
+                    Order = ex.Order,
+                    PlannedSets = ex.PlannedSets,
+                    PlannedReps = ex.PlannedReps,
+                    PlannedWeight = ex.PlannedWeight
+                });
+            }
+        }
+        else
+        {
+            var newPlan = new TrainingPlan
+            {
+                Name = model.Name,
+                Description = model.Description,
+                UserId = userId,
+                Exercises = model.Exercises.Select(ex => new PlanExercise
+                {
+                    ExerciseId = ex.ExerciseId,
+                    Order = ex.Order,
+                    PlannedSets = ex.PlannedSets,
+                    PlannedReps = ex.PlannedReps,
+                    PlannedWeight = ex.PlannedWeight
+                }).ToList()
+            };
+            Db.TrainingPlans.Add(newPlan);
+        }
+
+        await Db.SaveChangesAsync();
+        isSubmitting = false;
+        Nav.NavigateTo("/training-plans");
+    }
+}
