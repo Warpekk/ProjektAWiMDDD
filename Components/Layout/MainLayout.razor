@@ -1,11 +1,27 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
         <a class="navbar-brand" href="/">ProjektAWiMDDD</a>
-        <div class="navbar-nav">
+        <div class="navbar-nav me-auto">
             <a class="nav-link" href="/exercises">Baza ćwiczeń</a>
             <a class="nav-link" href="/training-plans">Plany treningowe</a>
+        </div>
+
+        <div class="navbar-nav ms-auto align-items-center">
+            <AuthorizeView>
+                <Authorized>
+                    <span class="navbar-text text-light me-3">
+                        Witaj, <strong>@context.User.Identity?.Name</strong>
+                    </span>
+                    <a class="btn btn-outline-light btn-sm" href="/logout">Wyloguj</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="nav-link me-2" href="/login">Logowanie</a>
+                    <a class="btn btn-outline-success btn-sm" href="/register">Rejestracja</a>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
     </div>
 </nav>

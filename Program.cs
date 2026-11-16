@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ProjektAWiMDDD.Data;
@@ -15,9 +14,7 @@ namespace ProjektAWiMDDD
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
@@ -47,7 +44,10 @@ namespace ProjektAWiMDDD
             });
 
             builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
             builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<AppDbContext>();
+
+            builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
             builder.Services.AddScoped(sp => new HttpClient
@@ -67,12 +67,16 @@ namespace ProjektAWiMDDD
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-            app.MapIdentityApi<User>();
+            app.UseStaticFiles();
 
-            app.MapControllers();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseAntiforgery();
+            app.MapIdentityApi<User>();
+            app.MapControllers();
             app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
             app.Run();
         }
     }
