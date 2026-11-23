@@ -9,6 +9,7 @@
             <a class="nav-link" href="/training-plans">Plany treningowe</a>
             <a class="nav-link" href="workout-sessions">Moje treningi</a>
             <a class="nav-link" href="/workout-session">Rozpocznij trening</a>
+            <a class="nav-link" href="/statistics">Statystyki</a>
         </div>
 
         <div class="navbar-nav ms-auto align-items-center">
@@ -17,7 +18,7 @@
                     <span class="navbar-text text-light me-3">
                         Witaj, <strong>@context.User.Identity?.Name</strong>
                     </span>
-                    <a class="btn btn-outline-light btn-sm" href="/logout">Wyloguj</a>
+                    <a class="btn btn-outline-light btn-sm" href="/logout" data-enhance-nav="false">Wyloguj</a>
                 </Authorized>
                 <NotAuthorized>
                     <a class="nav-link me-2" href="/login">Logowanie</a>

@@ -5,14 +5,13 @@
 
 <PageTitle>Plany Treningowe</PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>Moje Plany Treningowe</h3>
-    <a href="/training-plans/create" class="btn btn-success">+ Nowy Plan</a>
-</div>
-
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <div class="alert alert-danger">@errorMessage</div>
+    <div class="alert alert-warning mt-4">
+        <h5>Nie jesteś zalogowany</h5>
+        <p> @errorMessage </p>
+        <a href="/login" class="btn btn-primary">Zaloguj się</a>
+    </div>
 }
 else if (isLoading)
 {
@@ -26,6 +25,10 @@ else if (plans.Count == 0)
 }
 else
 {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Moje Plany Treningowe</h3>
+        <a href="/training-plans/create" class="btn btn-success">+ Nowy Plan</a>
+    </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var plan in plans)
         {
@@ -68,7 +71,7 @@ else
         }
         catch (HttpRequestException)
         {
-            errorMessage = "Brak dostępu. Zaloguj się, aby zobaczyć swoje plany treningowe.";
+            errorMessage = "Zaloguj się, aby zobaczyć swoje plany treningowe.";
         }
         isLoading = false;
     }
