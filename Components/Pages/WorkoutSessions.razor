@@ -1,0 +1,190 @@
+﻿@page "/workout-sessions"
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using ProjektAWiMDDD.Services
+@using ProjektAWiMDDD.Dtos
+
+@inject FitnessApiService Api
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Moje treningi - FitPlanner</PageTitle>
+
+@if (!isAuthenticated)
+{
+    <div class="alert alert-warning mt-4">
+        <h5>Nie jesteś zalogowany</h5>
+        <p>Zaloguj się, aby zobaczyć swoje treningi.</p>
+        <a href="/login" class="btn btn-primary">Zaloguj się</a>
+    </div>
+}
+else
+{
+    <h3>Moje treningi</h3>
+
+    <p class="text-muted">
+        Tutaj znajdziesz rozpoczęte i zakończone treningi.
+    </p>
+
+    @if (isLoading)
+    {
+        <p><em>Ładowanie treningów...</em></p>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+    else if (sessions.Count == 0)
+    {
+        <div class="alert alert-info">
+            Nie masz jeszcze żadnych treningów.
+        </div>
+    }
+    else
+    {
+        <h5 class="mt-4 mb-3">Treningi w trakcie</h5>
+
+        @if (activeSessions.Count == 0)
+        {
+            <p class="text-muted">
+                Nie masz obecnie rozpoczętych treningów.
+            </p>
+        }
+        else
+        {
+            @foreach (var session in activeSessions)
+            {
+                <div class="card p-3 mb-3 border-success">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6>
+                                @(session.TrainingPlanName ?? $"Trening #{session.Id}")
+                            </h6>
+
+                            <p class="text-muted mb-1">
+                                Rozpoczęto: @session.Date.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                            </p>
+
+                            <p class="mb-2">
+                                Zapisane serie: @session.SetCount
+                            </p>
+
+                            <span class="badge bg-success">W trakcie</span>
+                        </div>
+
+                        <button class="btn btn-success"
+                                @onclick="() => ReturnToWorkout(session.Id)">
+                            Wróć do treningu
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+
+        <hr class="my-4" />
+
+        <h5 class="mb-3">Zakończone treningi</h5>
+
+        @if (completedSessions.Count == 0)
+        {
+            <p class="text-muted">
+                Nie masz jeszcze zakończonych treningów.
+            </p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Plan / trening</th>
+                            <th>Data</th>
+                            <th>Czas trwania</th>
+                            <th>Liczba serii</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var session in completedSessions)
+                        {
+                            <tr>
+                                <td>
+                                    @(session.TrainingPlanName ?? $"Trening #{session.Id}")
+                                </td>
+                                <td>
+                                    @session.Date.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                                </td>
+                                <td>
+                                    @(session.DurationMinutes.HasValue
+                                        ? $"{session.DurationMinutes} min"
+                                        : "—")
+                                </td>
+                                <td>@session.SetCount</td>
+                                <td>
+                                    <span class="badge bg-secondary">Zakończony</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+}
+
+@code {
+    private bool isAuthenticated;
+    private bool isLoading = true;
+
+    private string? errorMessage;
+
+    private List<WorkoutSessionDto> sessions = [];
+    private List<WorkoutSessionDto> activeSessions = [];
+    private List<WorkoutSessionDto> completedSessions = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        isAuthenticated = authState.User.Identity?.IsAuthenticated == true;
+
+        if (!isAuthenticated)
+        {
+            isLoading = false;
+            return;
+        }
+
+        await LoadSessionsAsync();
+    }
+
+    private async Task LoadSessionsAsync()
+    {
+        try
+        {
+            sessions = await Api.GetWorkoutSessionsAsync();
+
+            activeSessions = sessions
+                .Where(s => !s.DurationMinutes.HasValue)
+                .OrderByDescending(s => s.Date)
+                .ToList();
+
+            completedSessions = sessions
+                .Where(s => s.DurationMinutes.HasValue)
+                .OrderByDescending(s => s.Date)
+                .ToList();
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Nie udało się pobrać treningów. Spróbuj ponownie.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ReturnToWorkout(int id)
+    {
+        Nav.NavigateTo($"/workout-session/{id}");
+    }
+}
