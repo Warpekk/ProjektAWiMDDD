@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjektAWiMDDD.Models;
 using ProjektAWiMDDD.Models.Enums;
+using System.Reflection.Emit;
 
 namespace ProjektAWiMDDD.Data
 {
@@ -15,6 +16,7 @@ namespace ProjektAWiMDDD.Data
         public DbSet<WorkoutSession> WorkoutSessions => Set<WorkoutSession>();
         public DbSet<WorkoutSet> WorkoutSets => Set<WorkoutSet>();
         public DbSet<Goal> Goals => Set<Goal>();
+        public DbSet<WorkoutSessionExercise> WorkoutSessionExercises { get; set; }
 
         protected override void OnModelCreating(ModelBuilder b)
         {
@@ -40,6 +42,21 @@ namespace ProjektAWiMDDD.Data
                 new Exercise { Id = 4, Name = "Podciąganie na drążku", MuscleGroup = MuscleGroup.Back, Equipment = "Drążek" },
                 new Exercise { Id = 5, Name = "Plank", MuscleGroup = MuscleGroup.Core }
             );
+            b.Entity<WorkoutSessionExercise>()
+                .HasOne(e => e.WorkoutSession)
+                .WithMany(s => s.Exercises)
+                .HasForeignKey(e => e.WorkoutSessionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            b.Entity<WorkoutSessionExercise>()
+                .HasOne(e => e.Exercise)
+                .WithMany()
+                .HasForeignKey(e => e.ExerciseId)
+                .OnDelete(DeleteBehavior.Restrict);
+            b.Entity<WorkoutSessionExercise>()
+                .Property(e => e.PlannedWeight)
+                .HasPrecision(7, 2);
+
         }
     }
 }

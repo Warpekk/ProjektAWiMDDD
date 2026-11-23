@@ -72,4 +72,41 @@ public class FitnessApiService(HttpClient http)
 
         return response.IsSuccessStatusCode;
     }
+    public async Task<List<WorkoutSessionDto>> GetWorkoutSessionsAsync()
+    {
+        return await http.GetFromJsonAsync<List<WorkoutSessionDto>>(
+            "api/workoutsessions") ?? [];
+    }
+
+    public async Task<WorkoutSessionDetailsDto?> GetWorkoutSessionByIdAsync(int id)
+    {
+        return await http.GetFromJsonAsync<WorkoutSessionDetailsDto>(
+            $"api/workoutsessions/{id}");
+    }
+
+    public async Task<List<WorkoutSessionExerciseDto>> GetSessionExercisesAsync(int sessionId)
+    {
+        return await http.GetFromJsonAsync<List<WorkoutSessionExerciseDto>>(
+            $"api/workoutsessions/{sessionId}/exercises") ?? [];
+    }
+
+    public async Task<bool> ToggleSessionExerciseAsync(int sessionId, int sessionExerciseId)
+    {
+        var response = await http.PutAsync(
+            $"api/workoutsessions/{sessionId}/exercises/{sessionExerciseId}/complete",
+            null);
+
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> AddSessionExerciseAsync(
+        int sessionId,
+        AddSessionExerciseRequest request)
+    {
+        var response = await http.PostAsJsonAsync(
+            $"api/workoutsessions/{sessionId}/exercises",
+            request);
+
+        return response.IsSuccessStatusCode;
+    }
 }

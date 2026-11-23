@@ -11,5 +11,6 @@
         public int? DurationMinutes { get; set; }
         public string? Notes { get; set; }
         public List<WorkoutSet> Sets { get; set; } = new();
+        public List<WorkoutSessionExercise> Exercises { get; set; } = new();
     }
 }

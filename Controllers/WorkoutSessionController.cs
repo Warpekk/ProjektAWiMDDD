@@ -67,19 +67,143 @@ namespace ProjektAWiMDDD.Controllers
             return Ok(session);
         }
 
+        [HttpGet("{id}/exercises")]
+        public async Task<IActionResult> GetSessionExercises(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var sessionExists = await db.WorkoutSessions
+                .AnyAsync(w => w.Id == id && w.UserId == userId);
+
+            if (!sessionExists)
+                return NotFound("Nie znaleziono treningu.");
+
+            var exercises = await db.WorkoutSessionExercises
+                .Where(e => e.WorkoutSessionId == id)
+                .OrderBy(e => e.Order)
+                .Select(e => new WorkoutSessionExerciseDto(
+                    e.Id,
+                    e.ExerciseId,
+                    e.Exercise.Name,
+                    e.Order,
+                    e.PlannedSets,
+                    e.PlannedReps,
+                    e.PlannedWeight,
+                    e.IsCompleted,
+                    e.IsAdditional
+                ))
+                .ToListAsync();
+
+            return Ok(exercises);
+        }
+
+        [HttpPut("{id}/exercises/{exerciseId}/complete")]
+        public async Task<IActionResult> CompleteExercise(int id, int exerciseId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var exercise = await db.WorkoutSessionExercises
+                .FirstOrDefaultAsync(e =>
+                    e.Id == exerciseId &&
+                    e.WorkoutSessionId == id &&
+                    e.WorkoutSession.UserId == userId);
+
+            if (exercise == null)
+                return NotFound("Nie znaleziono ćwiczenia w tym treningu.");
+
+            if (await db.WorkoutSessions.AnyAsync(w =>
+                w.Id == id && w.DurationMinutes != null))
+                return BadRequest("Trening został już zakończony.");
+
+            exercise.IsCompleted = !exercise.IsCompleted;
+
+            await db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                exercise.Id,
+                exercise.IsCompleted,
+                message = "Zmieniono status ćwiczenia."
+            });
+        }
+
+        [HttpPost("{id}/exercises")]
+        public async Task<IActionResult> AddSessionExercise(
+    int id,
+    AddSessionExerciseRequest request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var session = await db.WorkoutSessions
+                .FirstOrDefaultAsync(w => w.Id == id && w.UserId == userId);
+
+            if (session == null)
+                return NotFound("Nie znaleziono treningu.");
+
+            if (session.DurationMinutes.HasValue)
+                return BadRequest("Trening został już zakończony.");
+
+            var exerciseExists = await db.Exercises
+                .AnyAsync(e => e.Id == request.ExerciseId);
+
+            if (!exerciseExists)
+                return BadRequest("Wybrane ćwiczenie nie istnieje.");
+
+            var alreadyAdded = await db.WorkoutSessionExercises
+                .AnyAsync(e =>
+                    e.WorkoutSessionId == id &&
+                    e.ExerciseId == request.ExerciseId);
+
+            if (alreadyAdded)
+                return BadRequest("To ćwiczenie jest już przypisane do treningu.");
+
+            var maxOrder = await db.WorkoutSessionExercises
+                .Where(e => e.WorkoutSessionId == id)
+                .Select(e => (int?)e.Order)
+                .MaxAsync() ?? 0;
+
+            var sessionExercise = new WorkoutSessionExercise
+            {
+                WorkoutSessionId = id,
+                ExerciseId = request.ExerciseId,
+                Order = maxOrder + 1,
+                PlannedSets = 0,
+                PlannedReps = 0,
+                PlannedWeight = null,
+                IsCompleted = false,
+                IsAdditional = true
+            };
+
+            db.WorkoutSessionExercises.Add(sessionExercise);
+            await db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Dodano dodatkowe ćwiczenie.",
+                sessionExercise.Id
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> Start(WorkoutSessionRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            List<PlanExercise> planExercises = [];
+
             if (request.TrainingPlanId.HasValue)
             {
-                var planExists = await db.TrainingPlans.AnyAsync(p =>
-                    p.Id == request.TrainingPlanId.Value &&
-                    p.UserId == userId);
+                var plan = await db.TrainingPlans
+                    .FirstOrDefaultAsync(p =>
+                        p.Id == request.TrainingPlanId.Value &&
+                        p.UserId == userId);
 
-                if (!planExists)
+                if (plan == null)
                     return BadRequest("Wybrany plan treningowy nie istnieje.");
+
+                planExercises = await db.PlanExercises
+                    .Where(p => p.TrainingPlanId == plan.Id)
+                    .ToListAsync();
             }
 
             var session = new WorkoutSession
@@ -93,10 +217,34 @@ namespace ProjektAWiMDDD.Controllers
             db.WorkoutSessions.Add(session);
             await db.SaveChangesAsync();
 
+            var sessionExercises = planExercises.Select(p =>
+                new WorkoutSessionExercise
+                {
+                    WorkoutSessionId = session.Id,
+                    ExerciseId = p.ExerciseId,
+                    Order = p.Order,
+                    PlannedSets = p.PlannedSets,
+                    PlannedReps = p.PlannedReps,
+                    PlannedWeight = p.PlannedWeight,
+                    IsCompleted = false,
+                    IsAdditional = false
+                }).ToList();
+
+            if (sessionExercises.Count > 0)
+            {
+                db.WorkoutSessionExercises.AddRange(sessionExercises);
+                await db.SaveChangesAsync();
+            }
+
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = session.Id },
-                new { session.Id, session.Date, message = "Trening został rozpoczęty." }
+                new
+                {
+                    session.Id,
+                    session.Date,
+                    message = "Trening został rozpoczęty."
+                }
             );
         }
 

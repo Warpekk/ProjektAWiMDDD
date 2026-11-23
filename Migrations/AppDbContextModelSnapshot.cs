@@ -421,6 +421,48 @@ namespace ProjektAWiMDDD.Migrations
                     b.ToTable("WorkoutSessions");
                 });
 
+            modelBuilder.Entity("ProjektAWiMDDD.Models.WorkoutSessionExercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAdditional")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlannedReps")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlannedSets")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("PlannedWeight")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("decimal(7,2)");
+
+                    b.Property<int>("WorkoutSessionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("WorkoutSessionId");
+
+                    b.ToTable("WorkoutSessionExercises");
+                });
+
             modelBuilder.Entity("ProjektAWiMDDD.Models.WorkoutSet", b =>
                 {
                     b.Property<int>("Id")
@@ -526,7 +568,7 @@ namespace ProjektAWiMDDD.Migrations
             modelBuilder.Entity("ProjektAWiMDDD.Models.PlanExercise", b =>
                 {
                     b.HasOne("ProjektAWiMDDD.Models.Exercise", "Exercise")
-                        .WithMany()
+                        .WithMany("PlanExercises")
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -571,6 +613,25 @@ namespace ProjektAWiMDDD.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ProjektAWiMDDD.Models.WorkoutSessionExercise", b =>
+                {
+                    b.HasOne("ProjektAWiMDDD.Models.Exercise", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ProjektAWiMDDD.Models.WorkoutSession", "WorkoutSession")
+                        .WithMany("Exercises")
+                        .HasForeignKey("WorkoutSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("WorkoutSession");
+                });
+
             modelBuilder.Entity("ProjektAWiMDDD.Models.WorkoutSet", b =>
                 {
                     b.HasOne("ProjektAWiMDDD.Models.Exercise", "Exercise")
@@ -590,6 +651,11 @@ namespace ProjektAWiMDDD.Migrations
                     b.Navigation("WorkoutSession");
                 });
 
+            modelBuilder.Entity("ProjektAWiMDDD.Models.Exercise", b =>
+                {
+                    b.Navigation("PlanExercises");
+                });
+
             modelBuilder.Entity("ProjektAWiMDDD.Models.TrainingPlan", b =>
                 {
                     b.Navigation("Exercises");
@@ -597,6 +663,8 @@ namespace ProjektAWiMDDD.Migrations
 
             modelBuilder.Entity("ProjektAWiMDDD.Models.WorkoutSession", b =>
                 {
+                    b.Navigation("Exercises");
+
                     b.Navigation("Sets");
                 });
 #pragma warning restore 612, 618
