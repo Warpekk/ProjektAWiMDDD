@@ -109,4 +109,9 @@ public class FitnessApiService(HttpClient http)
 
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<StatisticsDto?> GetStatisticsAsync()
+    {
+        return await http.GetFromJsonAsync<StatisticsDto>("api/statistics");
+    }
 }
