@@ -8,31 +8,12 @@
 
 <PageTitle>Baza Ćwiczeń</PageTitle>
 
-<h3>Baza Ćwiczeń</h3>
-
-<div class="row g-3 mb-4">
-    <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Szukaj po nazwie..."
-               @bind="searchQuery" @bind:event="oninput" @onkeyup="LoadExercisesAsync" />
-    </div>
-    <div class="col-md-4">
-        <select class="form-select" @bind="selectedGroup" @bind:after="LoadExercisesAsync">
-            <option value="">Wszystkie partie mięśniowe</option>
-            @foreach (var group in Enum.GetValues<MuscleGroup>())
-            {
-                <option value="@group">@group</option>
-            }
-        </select>
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-outline-secondary w-100" @onclick="ResetFiltersAsync">Wyczyść</button>
-    </div>
-</div>
-
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <div class="alert alert-danger">
-        @errorMessage
+    <div class="alert alert-warning mt-4">
+        <h5>Nie jesteś zalogowany</h5>
+        <p> @errorMessage </p>
+        <a href="/login" class="btn btn-primary">Zaloguj się</a>
     </div>
 }
 else if (isLoading)
@@ -45,6 +26,26 @@ else if (exercises.Count == 0)
 }
 else
 {
+    <h3>Baza Ćwiczeń</h3>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Szukaj po nazwie..."
+                   @bind="searchQuery" @bind:event="oninput" @onkeyup="LoadExercisesAsync" />
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" @bind="selectedGroup" @bind:after="LoadExercisesAsync">
+                <option value="">Wszystkie partie mięśniowe</option>
+                @foreach (var group in Enum.GetValues<MuscleGroup>())
+                {
+                    <option value="@group">@group</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-outline-secondary w-100" @onclick="ResetFiltersAsync">Wyczyść</button>
+        </div>
+    </div>
     <div class="table-responsive">
         <table class="table table-striped table-hover align-middle">
             <thead class="table-dark">
@@ -91,7 +92,7 @@ else
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
         {
             exercises = [];
-            errorMessage = "Brak dostępu. Zaloguj się, aby zobaczyć bazę ćwiczeń.";
+            errorMessage = "Zaloguj się, aby zobaczyć bazę ćwiczeń.";
         }
         catch (Exception)
         {
