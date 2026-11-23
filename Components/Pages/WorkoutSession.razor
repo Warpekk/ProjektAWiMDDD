@@ -1,0 +1,309 @@
+﻿@page "/workout-session"
+@rendermode InteractiveServer
+
+@using ProjektAWiMDDD.Services
+@using ProjektAWiMDDD.Dtos
+
+@inject FitnessApiService Api
+@inject NavigationManager Nav
+
+<PageTitle>Aktywny trening - FitPlanner</PageTitle>
+
+<h3>Aktywny trening</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+@if (isLoading)
+{
+    <p><em>Ładowanie danych...</em></p>
+}
+else if (!isStarted)
+{
+    <div class="card p-4">
+        <h5>Rozpocznij nowy trening</h5>
+
+        <div class="mb-3">
+            <label class="form-label">Plan treningowy (opcjonalnie)</label>
+            <InputSelect class="form-select" @bind-Value="selectedPlanId">
+                <option value="">Trening bez planu</option>
+                @foreach (var plan in availablePlans)
+                {
+                    <option value="@plan.Id">@plan.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Notatki</label>
+            <InputTextArea class="form-control" @bind-Value="notes" />
+        </div>
+
+        <button class="btn btn-success"
+                @onclick="StartWorkoutAsync"
+                disabled="@isSubmitting">
+            @(isSubmitting ? "Rozpoczynanie..." : "Rozpocznij trening")
+        </button>
+    </div>
+}
+else
+{
+    <div class="card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5>Trening #@sessionId</h5>
+            <span class="badge bg-success">W trakcie</span>
+        </div>
+
+        <p class="text-muted mb-0">Dodawaj ćwiczenia i zapisuj wykonane serie.</p>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h5>Dodaj wykonaną serię</h5>
+
+        <EditForm Model="setModel" OnValidSubmit="AddSetAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+
+            <div class="mb-3">
+                <label class="form-label">Ćwiczenie</label>
+                <InputSelect class="form-select" @bind-Value="setModel.ExerciseId">
+                    <option value="0">-- Wybierz ćwiczenie --</option>
+                    @foreach (var exercise in availableExercises)
+                    {
+                        <option value="@exercise.Id">@exercise.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => setModel.ExerciseId)" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Numer serii</label>
+                    <InputNumber class="form-control" @bind-Value="setModel.SetNumber" />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Powtórzenia</label>
+                    <InputNumber class="form-control" @bind-Value="setModel.Reps" />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Ciężar (kg)</label>
+                    <InputNumber class="form-control" @bind-Value="setModel.Weight" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary"
+                    disabled="@isSubmitting">
+                Dodaj serię
+            </button>
+        </EditForm>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <h5>Wykonane serie</h5>
+
+        @if (addedSets.Count == 0)
+        {
+            <p class="text-muted">Nie dodano jeszcze żadnych serii.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Ćwiczenie</th>
+                            <th>Seria</th>
+                            <th>Powtórzenia</th>
+                            <th>Ciężar (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var set in addedSets)
+                        {
+                            <tr>
+                                <td>@set.ExerciseName</td>
+                                <td>@set.SetNumber</td>
+                                <td>@set.Reps</td>
+                                <td>@set.Weight</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <button class="btn btn-danger"
+            @onclick="FinishWorkoutAsync"
+            disabled="@isSubmitting">
+        Zakończ trening
+    </button>
+}
+
+@code {
+    private bool isLoading = true;
+    private bool isSubmitting;
+    private bool isStarted;
+
+    private int sessionId;
+    private int nextSetNumber = 1;
+
+    private int? selectedPlanId;
+    private string? notes;
+
+    private string? errorMessage;
+    private string? successMessage;
+
+    private List<TrainingPlanDto> availablePlans = [];
+    private List<ExerciseDto> availableExercises = [];
+    private List<WorkoutSetDto> addedSets = [];
+
+    private WorkoutSetRequest setModel = new()
+    {
+        SetNumber = 1,
+        Reps = 10,
+        Weight = 0
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            availablePlans = await Api.GetTrainingPlansAsync();
+            availableExercises = await Api.GetExercisesAsync();
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Nie udało się pobrać danych. Sprawdź połączenie i zalogowanie.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task StartWorkoutAsync()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+        successMessage = null;
+
+        try
+        {
+            var result = await Api.StartWorkoutSessionAsync(
+                new WorkoutSessionRequest
+                {
+                    TrainingPlanId = selectedPlanId,
+                    Notes = notes
+                });
+
+            if (result is null)
+            {
+                errorMessage = "Nie udało się rozpocząć treningu.";
+            }
+            else
+            {
+                sessionId = result.Id;
+                isStarted = true;
+                successMessage = "Trening został rozpoczęty!";
+            }
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Błąd połączenia z API.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private async Task AddSetAsync()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+        successMessage = null;
+
+        try
+        {
+            setModel.SetNumber = nextSetNumber;
+
+            var success = await Api.AddWorkoutSetAsync(sessionId, setModel);
+
+            if (!success)
+            {
+                errorMessage = "Nie udało się dodać serii. Sprawdź wybrane ćwiczenie.";
+                return;
+            }
+
+            var exercise = availableExercises
+                .First(e => e.Id == setModel.ExerciseId);
+
+            addedSets.Add(new WorkoutSetDto(
+                0,
+                exercise.Id,
+                exercise.Name,
+                setModel.SetNumber,
+                setModel.Reps,
+                setModel.Weight
+            ));
+
+            nextSetNumber++;
+
+            setModel = new WorkoutSetRequest
+            {
+                ExerciseId = exercise.Id,
+                SetNumber = nextSetNumber,
+                Reps = 10,
+                Weight = 0
+            };
+
+            successMessage = "Seria została dodana.";
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Błąd połączenia z API.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private async Task FinishWorkoutAsync()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+
+        try
+        {
+            var success = await Api.FinishWorkoutSessionAsync(sessionId);
+
+            if (success)
+            {
+                Nav.NavigateTo("/training-plans");
+            }
+            else
+            {
+                errorMessage = "Nie udało się zakończyć treningu.";
+            }
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Błąd połączenia z API.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+}

@@ -51,4 +51,10 @@ namespace ProjektAWiMDDD.Dtos
         int Reps,
         decimal Weight
     );
+
+    public record WorkoutSessionStartResponse(
+        int Id,
+        DateTime Date,
+        string Message
+    );
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.12.12324.72 oobinsiders
+VisualStudioVersion = 18.12.12324.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjektAWiMDDD", "ProjektAWiMDDD.csproj", "{0254696C-F79E-4FFA-B276-AC0F5CF80628}"
 EndProject

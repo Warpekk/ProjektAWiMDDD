@@ -2,6 +2,7 @@
 using ProjektAWiMDDD.Dtos;
 using ProjektAWiMDDD.Models.Enums;
 
+
 namespace ProjektAWiMDDD.Services;
 
 public class FitnessApiService(HttpClient http)
@@ -43,6 +44,32 @@ public class FitnessApiService(HttpClient http)
     public async Task<bool> DeleteTrainingPlanAsync(int id)
     {
         var response = await http.DeleteAsync($"api/trainingplans/{id}");
+        return response.IsSuccessStatusCode;
+    }
+    public async Task<WorkoutSessionStartResponse?> StartWorkoutSessionAsync(
+    WorkoutSessionRequest request)
+    {
+        var response = await http.PostAsJsonAsync("api/workoutsessions", request);
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        return await response.Content.ReadFromJsonAsync<WorkoutSessionStartResponse>();
+    }
+
+    public async Task<bool> AddWorkoutSetAsync(int sessionId, WorkoutSetRequest request)
+    {
+        var response = await http.PostAsJsonAsync(
+            $"api/workoutsessions/{sessionId}/sets", request);
+
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> FinishWorkoutSessionAsync(int sessionId)
+    {
+        var response = await http.PutAsync(
+            $"api/workoutsessions/{sessionId}/finish", null);
+
         return response.IsSuccessStatusCode;
     }
 }
